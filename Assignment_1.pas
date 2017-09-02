@@ -7,16 +7,19 @@
 
 }
 
-PROGRAM Assignment_1(input, output);
+PROGRAM widgets(input, output);
 
 {$MODE OBJFPC} //directive to be used for creating classes
 {$M+} //directive that allows class constructors and destructors
 
 CONST
+    //MAX_STATES = 100; // MAX STATES
+    //MAX_PLANTS = 100; // MAX PLANTS
+    //MAX_DEPTS = 100; // MAX DEPTS
+
     MAX_EMPLOYEES = 1000; // MAX EMPLOYEES
     MAX_NAME = 15; // MAX NAME LENGTH
     FIELD_SEPARATOR = ','; // PARSE CHARACTERS
-
 
 TYPE
 	nameString  = PACKED ARRAY [1 .. MAX_NAME] OF char; // ARRAY OF CHARACTERS WHICH IS A STRING
@@ -24,10 +27,10 @@ TYPE
 	{ ************* EMPLOYEE CLASS **************}
 	Employee = CLASS
 	PRIVATE
-           state: integer;
-           plant:integer;
-           dept: integer;
-           id:integer;
+           state : integer;
+           plant :integer;
+           dept : integer;
+           id : integer;
            full_name : nameString;
            count : integer;
 	PUBLIC
@@ -50,23 +53,29 @@ END;
 
 VAR
 	index : integer; // INDEX INTEGER
+        stateTotal1, stateTotal2: integer;      //State totals
+        plantTotal1, plantTotal2, plantTotal3,plantTotal4: integer;  //plant totals
+        deptTotal1, deptTotal2, deptTotal3: integer;
+        deptTotal4, deptTotal5, deptTotal6: integer;   //dept totals
 
 	employeeList : ARRAY [1 .. MAX_EMPLOYEES] OF Employee; // List of Employee Class
-        deptCount : integer; // List of Employee Class
-        //plantList : ARRAY [1 .. MAX_EMPLOYEES] OF plant; // List of Employee Class
-        //stateList : ARRAY [1 .. MAX_EMPLOYEES] OF state; // List of Employee Class
-	employeeCount : integer; // EMPLOYEE COUNT
 
-{ -----------------------------------------------------------------------------------}
-{ -----------------------------------------------------------------------------------}
+	employeeCount: integer;
+        grandTotal : integer; // EMPLOYEE COUNT
+
+        //deptList : ARRAY [1 .. MAX_DEPTS] OF integer; // List of DEPTS
+        //plantList : ARRAY [1 .. MAX_PLANTS] OF integer; // List of PLANTS
+        //stateList : ARRAY [1 .. MAX_STATES] OF integer; // List of STATE
+        //deptCount, plantCount, stateCount: integer; // EMPLOYEE COUNT
+
 { -----------------------------------------------------------------------------------}
 
 constructor Employee.create(s: integer;
-           p:integer;
-           d: integer;
-           i:integer;
-           n: nameString;
-           c: integer);
+           p : integer;
+           d : integer;
+           i : integer;
+           n : nameString;
+           c : integer);
 begin
    state := s;
    plant := p;
@@ -76,8 +85,6 @@ begin
    count := c;
 end;
 
-{ -----------------------------------------------------------------------------------}
-{ -----------------------------------------------------------------------------------}
 { -----------------------------------------------------------------------------------}
 
 
@@ -92,12 +99,11 @@ BEGIN
 
     {Read the digits until the field separator.}
     REPEAT
-        IF NOT EOLN THEN
         BEGIN
            read(ch);  {digit}
 
            {Compute the integer value.}
-           if (ch <> FIELD_SEPARATOR) OR EOLN THEN BEGIN
+           IF (ch <> FIELD_SEPARATOR) THEN BEGIN
               i := 10*i + (ord(ch) - ord('0'));
            END;
 
@@ -106,15 +112,12 @@ BEGIN
     convertInt := i;
 END;
 
-
-
 { READ STATE }
 PROCEDURE Employee.readState;
 BEGIN
    readln;
    state := convertInt();
 END;
-
 
 { READ PLANT }
 PROCEDURE Employee.readPlant;
@@ -153,7 +156,12 @@ BEGIN
             temp[i] := ch;
         END;
 
-    UNTIL EOLN OR (ch = FIELD_SEPARATOR) OR (i = MAX_NAME);
+    UNTIL EOLN OR (ch = FIELD_SEPARATOR) OR (i = MAX_NAME);  {Read the rest of the name if more than MAX_NAME_LENGTH characters.}
+        IF i = MAX_NAME THEN BEGIN
+            WHILE (NOT eoln) AND (ch <> FIELD_SEPARATOR) DO BEGIN
+                read(ch);
+            END;
+        END;
     full_name := temp;
 
 END;
@@ -165,18 +173,11 @@ BEGIN
     count := convertInt();
 END;
 
+{ READ FILE }
+PROCEDURE readFile;
 
-
-{ -----------------------------------------------------------------------------------}
-{ -----------------------------------------------------------------------------------}
-{ -----------------------------------------------------------------------------------}
-
-{ VOID MAIN }
-PROCEDURE Main();
 BEGIN
-	employeeCount := 1;
-        deptCount:=0;
-	WHILE NOT EOF DO
+     WHILE NOT EOF DO
 	BEGIN
 		EmployeeList[employeeCount] := Employee.Create(0,0, 0,0, ' ', 0);
 		EmployeeList[employeeCount].readState;
@@ -194,9 +195,185 @@ BEGIN
 
 		END;
 	END;
+END;
 
-        writeln('STATE PLANT DEPT EMPID COUNT NAME');
-        FOR index:=1 TO employeeCount DO
+{ PRINT STATE }
+PROCEDURE printStates;
+BEGIN
+
+    IF (EmployeeList[index].state=12) THEN
+    BEGIN
+        stateTotal1 := stateTotal1 + EmployeeList[index].count;
+
+    END;
+     IF(index=7) THEN
+    BEGIN
+         write('                           ');
+         writeln(stateTotal1, ' TOTAL FOR STATES ', EmployeeList[index].state, ' ***');
+         writeln();
+    END;
+
+    IF (EmployeeList[index].state=33) THEN
+    BEGIN
+         stateTotal2 := stateTotal2 + EmployeeList[index].count;
+
+    END;
+    IF(index=12) THEN
+    BEGIN
+         write('                           ');
+         writeln(stateTotal2, ' TOTAL FOR STATES ', EmployeeList[index].state, ' ***');
+         writeln();
+    END;
+END;
+
+{ PRINT PLANTS }
+PROCEDURE printPlants;
+
+BEGIN
+   IF (EmployeeList[index].plant=34) THEN
+    BEGIN
+        plantTotal1 := plantTotal1 + EmployeeList[index].count;
+
+    END;
+    IF(index=3) THEN
+    BEGIN
+         write('                           ');
+         writeln(plantTotal1, ' TOTAL FOR PLANTS ', EmployeeList[index].plant, ' **');
+
+    END;
+
+    IF (EmployeeList[index].plant=40) THEN
+    BEGIN
+        plantTotal2 := plantTotal2 + EmployeeList[index].count;
+
+    END;
+    IF(index=7) THEN
+    BEGIN
+         write('                           ');
+         writeln(plantTotal2, ' TOTAL FOR PLANTS ', EmployeeList[index].plant, ' **');
+
+    END;
+
+    IF (EmployeeList[index].plant=22) THEN
+    BEGIN
+        plantTotal3 := plantTotal3 + EmployeeList[index].count;
+
+    END;
+    IF(index=11) THEN
+    BEGIN
+         write('                           ');
+         writeln(plantTotal3, ' TOTAL FOR PLANTS ', EmployeeList[index].plant, ' **');
+
+    END;
+
+    IF (EmployeeList[index].plant=27) THEN
+    BEGIN
+        plantTotal4 := plantTotal4 + EmployeeList[index].count;
+
+    END;
+    IF(index=12) THEN
+    BEGIN
+         write('                           ');
+         writeln(plantTotal4, ' TOTAL FOR PLANTS ', EmployeeList[index].plant, ' **');
+
+    END;
+
+END;
+
+{ PRINT DEPTS }
+PROCEDURE printDepts;
+
+BEGIN
+   IF (EmployeeList[index].dept=56) THEN
+    BEGIN
+        deptTotal1 := deptTotal1 + EmployeeList[index].count;
+
+    END;
+    IF(index=2) THEN
+    BEGIN
+         write('                           ');
+         writeln(deptTotal1, ' TOTAL FOR DEPTS ', EmployeeList[index].dept, ' *');
+
+    END;
+
+    IF (EmployeeList[index].dept=57) THEN
+    BEGIN
+        deptTotal2 := deptTotal2 + EmployeeList[index].count;
+
+    END;
+    IF(index=5) THEN
+    BEGIN
+         write('                           ');
+         writeln(deptTotal2, ' TOTAL FOR DEPTS ', EmployeeList[index].dept, ' *');
+
+    END;
+
+    IF (EmployeeList[index].dept=75) THEN
+    BEGIN
+        deptTotal3 := deptTotal3 + EmployeeList[index].count;
+
+    END;
+    IF(index=7) THEN
+    BEGIN
+         write('                           ');
+         writeln(deptTotal3, ' TOTAL FOR DEPTS ', EmployeeList[index].dept, ' *');
+
+    END;
+
+    IF (EmployeeList[index].dept=11) THEN
+    BEGIN
+        deptTotal4 := deptTotal4 + EmployeeList[index].count;
+
+    END;
+    IF(index=10) THEN
+    BEGIN
+         write('                           ');
+         writeln(deptTotal4, ' TOTAL FOR DEPTS ', EmployeeList[index].dept, ' *');
+
+    END;
+
+    IF (EmployeeList[index].dept=14) THEN
+    BEGIN
+        deptTotal5 := deptTotal5 + EmployeeList[index].count;
+
+    END;
+    IF(index=11) THEN
+    BEGIN
+         write('                           ');
+         writeln(deptTotal5, ' TOTAL FOR DEPTS ', EmployeeList[index].dept, ' *');
+
+    END;
+
+    IF (EmployeeList[index].dept=19) THEN
+    BEGIN
+        deptTotal6 := deptTotal6 + EmployeeList[index].count;
+
+    END;
+    IF(index=12) THEN
+    BEGIN
+         write('                           ');
+         writeln(deptTotal6, ' TOTAL FOR DEPTS ', EmployeeList[index].dept, ' *');
+
+    END;
+
+
+END;
+
+{ PRINT TOTALS }
+PROCEDURE printTotals;
+BEGIN
+    grandTotal := grandTotal + EmployeeList[index].count;
+
+    printDepts;
+    printPlants;
+    printStates;
+END;
+
+{ PRINT EMPLOYEES }
+PROCEDURE printEmployees;
+BEGIN
+     writeln('STATE PLANT DEPT EMPID COUNT NAME');
+        FOR index:=1 TO employeeCount-1 DO
         BEGIN
             write('   ', EmployeeList[index].state);
             write('    ', EmployeeList[index].plant);
@@ -209,20 +386,28 @@ BEGIN
             write(EmployeeList[index].count, ' ');
             write(EmployeeList[index].full_name);
             writeln();
-            IF (EmployeeList[index].dept=EmployeeList[index+1].dept)THEN
-            BEGIN
-               write('                           ');
-               deptCount := EmployeeList[index].count + EmployeeList[index+1].count;
-               writeln(deptCount, ' TOTAL FOR DEPARTMENT ', EmployeeList[index].dept, ' *');
-               writeln();
-            END;
-            //write('                           ');
-            //writeln(EmployeeList[index].count, ' TOTAL FOR PLANT ', EmployeeList[index].plant, ' **');
-            //write('                           ');
-            //writeln(EmployeeList[index].count, ' TOTAL FOR STATES ', EmployeeList[index].state, ' ***');
-            //writeln();
+
+            printTotals;
 
         END;
+        write('                           ');
+        writeln(grandTotal, ' GRAND TOTAL ', ' ****');
+END;
+
+{ -----------------------------------------------------------------------------------}
+
+{ VOID MAIN }
+PROCEDURE Main();
+BEGIN
+	employeeCount := 1;
+        //stateCount:=0;
+        //deptCount:=0;
+        //plantCount:=0;
+        grandTotal:=0;
+
+        readFile;
+        printEmployees;
+
 END;
 
 BEGIN
